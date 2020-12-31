@@ -1,5 +1,5 @@
 <!-- readme.md -->
-## Welcome to My Pages
+## Welcome to My Github Pages
 
 You can use the read and find out what is going on with me
 
@@ -15,7 +15,7 @@ I will fix it as soon as i find out
 
 ### License
 
-This project is licensed under the **GPL** license.
+This project is licensed under the **MIT** license.
 
 Copyright (c) Steve Sun ([@Digital_Sun](https://github.com/Digital-Sun))
 
