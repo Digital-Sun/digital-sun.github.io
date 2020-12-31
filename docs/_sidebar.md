@@ -8,5 +8,4 @@
 ---
 - <font size="1" face="Times" color="FF9933">LINK</font>
 
-- [<p><img src="/_media/weibo.png"  height="20" /></p>](https://weibo.com/ouchstyx)
 - [<p><img src="/_media/bilibili.png"  height="20" /></p>](https://space.bilibili.com/507054)
