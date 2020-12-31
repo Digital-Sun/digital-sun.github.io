@@ -1,6 +1,6 @@
 <!-- about.md -->
-# Nothing special.
+Nothing special.
 
-# I am just a ordinary man with naughty mind.
+I am just a ordinary man with naughty mind.
 
-# This is the way.
+This is the way.
