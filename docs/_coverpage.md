@@ -1,6 +1,6 @@
 <!-- _coverpage.md -->
 
-<font size="7" face="Agency FB">Mechanicus Typewriter</font>
+<font size="7" face="Agency FB">Mechanicus Typewriter</font><small>v0.3</small>
 
 *这东西我没法跟你解释*
 
