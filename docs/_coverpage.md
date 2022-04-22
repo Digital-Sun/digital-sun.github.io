@@ -1,6 +1,8 @@
 <!-- _coverpage.md -->
 
-<font size="7" face="Agency FB">Mechanicus Typewriter</font><small>v0.3</small>
+<font size="7" face="Agency FB">Mechanicus Typewriter</font><small>v0.4</small>
+
+![logo](_media/box.svg ':size=10%')
 
 *这东西我没法跟你解释*
 

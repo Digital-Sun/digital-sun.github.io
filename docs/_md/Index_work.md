@@ -7,6 +7,7 @@
 <font size=4 face="幼圆">Oracle</font>
 
 * [Linux下静默安装Oracle](_md/_work/20220419_Linux_Oracle_Silent_Installation.md)
+* [异常情况的UNDO表空间释放](_md/_work/20220422_Undo_Release.md)
 
 <font size=4 face="幼圆">JDEdward</font>
 
