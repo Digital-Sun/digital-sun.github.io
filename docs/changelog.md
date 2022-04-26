@@ -1,6 +1,10 @@
 <!-- Changelog.md -->
 # 变更日志
 ---
+### *2022-04-26* &nbsp; v0.5
+ * add plugin folder to localize plugin js scripts.
+ * add countable plugin.
+
 ### *2022-04-21* &nbsp; v0.4
  * add footer plugin.
  * localize dark theme.css, change siderbar width.

@@ -1,2 +1,2 @@
 ---
-Maintained by [ouchstyx@hotmail.com]. Proudly published with [docsify](https://docsify.js.org)
+Maintained by [ouchstyx@hotmail.com]. Published with [docsify](https://docsify.js.org)

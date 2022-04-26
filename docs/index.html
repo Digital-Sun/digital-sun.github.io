@@ -6,8 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="Mechanicus_Typewriter">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="theme.css">
-  <link rel="stylesheet" href="https://unpkg.com/docsify-toc@1.0.0/dist/toc.css">
+  <link rel="stylesheet" href="CSS/theme.css">
+  <link rel="stylesheet" href="CSS/toc.css">
 </head>
 <body>
   <div id="app">网页折越中...</div>
@@ -18,8 +18,7 @@
       coverpage: true,
       onlyCover: true,
       auto2top: true,
-      name: '<span><font size=4 color="#ea6f5a" face="方正姚体"><b>数据库装载完成</b></font></span>',
-      <!--repo: 'https://github.com/Digital-Sun/digital-sun.github.io',--!>
+      name: '<span><font size=4 color="#ea6f5a" face="Roboto Mono"><b>数据库装载完成</b></font></span>',
       subMaxLevel: 2,
       requestHeaders: {
         'cache-control': 'max-age=0',
@@ -29,13 +28,28 @@
         headings: 'h1, h2, h3, h4, h5, h6',
         title: '目录',
       },
+      count:{
+        countable: true,
+        position: 'top',
+        margin: '10px',
+        float: 'right',
+        fontsize:'0.9em',
+        color:'#ea6f5a',
+        language:'chinese',
+        localization: {
+          words: "",
+          minute: ""
+        },
+        isExpected: true
+      },
       loadFooter: true,
     }
   </script>
   <!-- Docsify v4 -->
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  <script src="https://unpkg.com/docsify-toc@1.0.0/dist/toc.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/zoom-image.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/@alertbox/docsify-footer/dist/docsify-footer.min.js"></script>
+  <script src="plugin/toc.js"></script>
+  <script src="plugin/zoom-image.min.js"></script>
+  <script src="plugin/docsify-footer.min.js"></script>
+  <script src="plugin/countable.min.js"></script>
 </body>
 </html>

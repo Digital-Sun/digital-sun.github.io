@@ -1,4 +1,6 @@
-@import url("https://fonts.googleapis.com/css?family=Roboto+Mono|Source+Sans+Pro:300,400,600");
+/* 20220426 backup from "//cdn.jsdelivr.net/npm/docsify@4/lib/themes/dark.css" */
+
+@import url("https://fonts.googleapis.com/css?family=Roboto+Mono|Source+Sans+Pro|Teko:300,400,600");
 
 * {
 	-webkit-font-smoothing: antialiased;
