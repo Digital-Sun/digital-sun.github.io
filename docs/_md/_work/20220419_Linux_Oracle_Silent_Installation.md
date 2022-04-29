@@ -141,6 +141,8 @@ shmfs                                     /dev/shm                tmpfs   defaul
 
 老实的用yum安装完了依赖包
 
+>yum install binutils compat-libcap1 compat-libstdc++ gcc gcc-c++ glibc glibc-devel ksh libaio libaio-devel libgcc libstdc++ libstdc++-devel libXi libXtst make sysstat unzip
+
 ## 关闭transparent hugepage
 尽管THP的本意是为提升性能，但某些数据库厂商还是建议直接关闭THP(比如说O记)，否则可能导致性能下降，内存锁，甚至系统重启等问题。
 Root用户登录。
@@ -176,6 +178,7 @@ useradd -u 501 -g oinstall -G dba,oper,asmdba oracle
 passwd oracle # 好孩子不要用这种简单的密码
 # 创建一个Inventory目录供后续安装使用，注意不要放在预定的Oracle Base中
 mkdir /home/oracle/oraInventory
+chown oracle:oinstall /home/oracle/oraInventory
 # 检查一下oracle用户
 id oracle
 # 显示内容如下
@@ -233,7 +236,7 @@ net.core.wmem_max = 1048576
 ## 上传安装介质
 
 把之前下载好的 1of7 和 2of7 按你喜欢的方法拷贝（我用的scp）到 ***/u01/Install_Media*** 下面，
-两个压缩包unzip到一起（没有unzip就yum install unzip一下）。
+两个压缩包unzip到一起。
 文件目录如下
 ```shell
 [root@WMS-ZJK-DB database]# ls -l
@@ -276,7 +279,7 @@ O记建议修改文件权限为700，主要因为文件中涉及数据库账号�
 export PATH
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=$ORACLE_BASE/product/11.2.0/dbhome_1
-export ORACLE_SID=WMSMDB
+export ORACLE_SID=<ORACLE_SID>
 export PATH=$ORACLE_HOME/bin:$PATH
 umask 022
 ```
@@ -292,8 +295,38 @@ umask 022
 
 来看看db_install.rsp，很长，其实官方注释已经很明细了，我还是在这里用中文结合图形界面安装注释一些内容，所以文件里中文都是我后添加的，使用的时候注意一下去掉#。
 
+简化版内容如下:
+```shell
+####################################################################
+## Simple Response File for Install DB Software Only              ##
+####################################################################
+#------------------------------------------------------------------------------
+# Value do not be changed.
+#------------------------------------------------------------------------------
+oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_schema_v11_2_0
+oracle.install.db.EEOptionsSelection=false
+oracle.install.db.optionalComponents=oracle.rdbms.partitioning:11.2.0.3.0,oracle.oraolap:11.2.0.3.0,oracle.rdbms.dm:11.2.0.3.0,oracle.rdbms.dv:11.2.0.3.0,oracle.rdbms.lbac:11.2.0.3.0,oracle.rdbms.rat:11.2.0.3.0
+#------------------------------------------------------------------------------
+# Value can be changed.
+#-------------------------------------------------------------------------------
+oracle.install.option=INSTALL_DB_SWONLY
+ORACLE_HOSTNAME=<HOSTNAME>
+UNIX_GROUP_NAME=oinstall
+INVENTORY_LOCATION=/home/oracle/oraInventory
+SELECTED_LANGUAGES=en,zh_CN
+ORACLE_HOME=/u01/app/oracle/product/11.2.0/dbhome_1
+ORACLE_BASE=/u01/app/oracle
+oracle.install.db.InstallEdition=EE
+oracle.install.db.DBA_GROUP=dba
+oracle.install.db.OPER_GROUP=oinstall
+oracle.install.db.config.starterdb.type=GENERAL_PURPOSE
+oracle.install.db.config.starterdb.password.ALL=<password>
+DECLINE_SECURITY_UPDATES=true
+```
+
+
 <details>
-<summary>单击展开 db_install.rsp</summary>
+<summary><font color='#ea6f5a'><b><i>单击展开 db_install.rsp 详细内容</i></b></font></summary>
 
 ```shell
 [oracle@WMS-ZJK-DB response]$ cat db_install.rsp 
@@ -326,7 +359,7 @@ oracle.install.responseFileVersion=/oracle/install/rspfmt_dbinstall_response_sch
 # 3. UPGRADE_DB
 # Steve  : 仅安装软件的话，就填第一个
 #-------------------------------------------------------------------------------
-oracle.install.option=
+oracle.install.option=INSTALL_DB_SWONLY
 
 #-------------------------------------------------------------------------------
 # Specify the hostname of the system as set during the install. It can be used
@@ -334,12 +367,12 @@ oracle.install.option=
 # first hostname found on the system. (e.g., for systems with multiple hostnames 
 # and network interfaces)
 #-------------------------------------------------------------------------------
-ORACLE_HOSTNAME=
+ORACLE_HOSTNAME=<HOSTNAME>
 
 #-------------------------------------------------------------------------------
 # Specify the Unix group to be set for the inventory directory.  
 #-------------------------------------------------------------------------------
-UNIX_GROUP_NAME=
+UNIX_GROUP_NAME=oninstall
 
 #-------------------------------------------------------------------------------
 # Specify the location which holds the inventory files.
@@ -347,7 +380,7 @@ UNIX_GROUP_NAME=
 # Windows based Operating System.
 # Steve  : 这个得设置一下，不然会报错，设置在Oracle Base之外
 #-------------------------------------------------------------------------------
-INVENTORY_LOCATION=
+INVENTORY_LOCATION=/home/oracle/oraInventory
 
 #-------------------------------------------------------------------------------
 # Specify the languages in which the components will be installed.             
@@ -385,19 +418,19 @@ INVENTORY_LOCATION=
 # Example : SELECTED_LANGUAGES=all_langs 
 # Steve  : 等于图形界面选语言那里
 #------------------------------------------------------------------------------
-SELECTED_LANGUAGES=en
+SELECTED_LANGUAGES=en,zh_CN
 
 #------------------------------------------------------------------------------
 # Specify the complete path of the Oracle Home.
 # Steve  : 必填了，按之前规划填吧
 #------------------------------------------------------------------------------
-ORACLE_HOME=
+ORACLE_HOME=/u01/app/oracle/product/11.2.0/dbhome_1
 
 #------------------------------------------------------------------------------
 # Specify the complete path of the Oracle Base. 
 # Steve  : 必填了，按之前规划填吧
 #------------------------------------------------------------------------------
-ORACLE_BASE=
+ORACLE_BASE=/u01/app/oracle
 
 #------------------------------------------------------------------------------
 # Specify the installation edition of the component.                        
@@ -409,7 +442,7 @@ ORACLE_BASE=
 # PE     : Personal Edition (WINDOWS ONLY)
 # Steve  : 选版本，EE
 #------------------------------------------------------------------------------
-oracle.install.db.InstallEdition=
+oracle.install.db.InstallEdition=EE
 
 #------------------------------------------------------------------------------
 # This variable is used to enable or disable custom install and is considered
@@ -457,14 +490,14 @@ oracle.install.db.optionalComponents=oracle.rdbms.partitioning:11.2.0.3.0,oracle
 # The DBA_GROUP is the OS group which is to be granted OSDBA privileges.
 # Steve  : 填之前创建得dba
 #------------------------------------------------------------------------------
-oracle.install.db.DBA_GROUP=
+oracle.install.db.DBA_GROUP=dba
 
 #------------------------------------------------------------------------------
 # The OPER_GROUP is the OS group which is to be granted OSOPER privileges.
 # The value to be specified for OSOPER group is optional.
 # Steve  : 填之前创建得oinstall
 #------------------------------------------------------------------------------
-oracle.install.db.OPER_GROUP=
+oracle.install.db.OPER_GROUP=oinstall
 
 #------------------------------------------------------------------------------
 # Specify the cluster node names selected during the installation.
@@ -568,7 +601,7 @@ oracle.install.db.config.starterdb.enableSecuritySettings=true
 # starter database.
 # Steve  : 设置全部的密码，不过我们只安装数据库软件，其实上下很多参数没用到
 #-------------------------------------------------------------------------------
-oracle.install.db.config.starterdb.password.ALL=
+oracle.install.db.config.starterdb.password.ALL=<password>
 
 #-------------------------------------------------------------------------------
 # Specify the SYS password for the starter database.
@@ -708,7 +741,7 @@ SECURITY_UPDATES_VIA_MYORACLESUPPORT=
 # Example    : DECLINE_SECURITY_UPDATES=false
 # Steve  : 这里有点Tricky，是选true才不会用配置更新补丁，但默认是false，默认执行会报错。
 #------------------------------------------------------------------------------
-DECLINE_SECURITY_UPDATES=
+DECLINE_SECURITY_UPDATES=TRUE
 
 #------------------------------------------------------------------------------
 # Specify the Proxy server name. Length should be greater than zero.
@@ -790,11 +823,41 @@ AUTOUPDATES_MYORACLESUPPORT_PASSWORD=
 ```
 另起一个窗口可以***tail***一下生成的日志文件，进行检查和排错
 
+运行完以后会提示需要使用Root执行两个命令，这个和图形化安装是一样的。
+```shell
+/home/oracle/oraInventory/orainstRoot.sh
+/u01/app/oracle/product/11.2.0/dbhome_1/root.sh
+```
+
 ### 配置数据库实例
 来看看dbca.rsp，同样中文都是我后添加的，使用的时候注意一下。有些内容是Rac才使用，单实例可以不设置，注意一下默认值，使用的时候记得去掉#号。
 
+简化版内容如下
+
+```shell
+##############################################################################
+##  Simple Response File for Install Single Instance DB  Only               ##
+##############################################################################
+
+[GENERAL]
+RESPONSEFILE_VERSION = "11.2.0"
+OPERATION_TYPE = "createDatabase"
+[CREATEDATABASE]
+GDBNAME = "WMSTDB"
+SID = "WMSTDB"
+TEMPLATENAME = "General_Purpose.dbc"
+SYSPASSWORD = "welcome1"
+SYSTEMPASSWORD = "welcome1"
+CHARACTERSET = "AL32UTF8"
+NATIONALCHARACTERSET= "AL16UTF16"
+LISTENERS = "listener"
+MEMORYPERCENTAGE = "75"
+AUTOMATICMEMORYMANAGEMENT = "TRUE"
+TOTALMEMORY = "24576"
+```
+
 <details>
-<summary>单击展开 dbca.rsp</summary>
+<summary><font color='#ea6f5a'><b><i>单击展开 dbca.rsp详细内容</i></b></font></summary>
 
 ```shell
 [root@WMS-ZJK-DB response]# cat dbca.rsp
@@ -877,7 +940,7 @@ OPERATION_TYPE = "createDatabase"
 # Mandatory     : Yes
 # Steve         : 设置Global Name
 #-----------------------------------------------------------------------------
-GDBNAME = "orcl11g.us.oracle.com"
+GDBNAME = "<ORACLE_GLOBAL_NAME>"
 
 #-----------------------------------------------------------------------------
 # Name          : RACONENODE
@@ -970,7 +1033,7 @@ GDBNAME = "orcl11g.us.oracle.com"
 # Mandatory     : No
 # Steve         : 设置SID。
 #-----------------------------------------------------------------------------
-SID = "orcl11g"
+SID = "<SID>"
 
 #-----------------------------------------------------------------------------
 # Name          : NODELIST
@@ -1012,7 +1075,7 @@ TEMPLATENAME = "General_Purpose.dbc"
 # Mandatory     : Yes
 # Steve         : SYS的密码,建议设置一下。
 #-----------------------------------------------------------------------------
-#SYSPASSWORD = "password"
+SYSPASSWORD = "<password>"
 
 #-----------------------------------------------------------------------------
 # Name          : SYSTEMPASSWORD
@@ -1023,7 +1086,7 @@ TEMPLATENAME = "General_Purpose.dbc"
 # Mandatory     : Yes
 # Steve         : SYSTEM的密码，建议设置一下。
 #-----------------------------------------------------------------------------
-#SYSTEMPASSWORD = "password"
+SYSTEMPASSWORD = "<password>"
 
 #-----------------------------------------------------------------------------
 # Name          : EMCONFIGURATION
@@ -1225,7 +1288,7 @@ TEMPLATENAME = "General_Purpose.dbc"
 # Mandatory     : NO
 # Steve         : 字符集，记得改自己想要的。
 #-----------------------------------------------------------------------------
-#CHARACTERSET = "US7ASCII"
+CHARACTERSET = "AL32UTF8"
 
 #-----------------------------------------------------------------------------
 # Name          : NATIONALCHARACTERSET
@@ -1236,7 +1299,7 @@ TEMPLATENAME = "General_Purpose.dbc"
 # Mandatory     : No
 # Steve         : 国家字符集，记得改自己想要的
 #-----------------------------------------------------------------------------
-#NATIONALCHARACTERSET= "UTF8"
+NATIONALCHARACTERSET= "AL16UTF16"
 
 #-----------------------------------------------------------------------------
 # Name          : REGISTERWITHDIRSERVICE
@@ -1284,7 +1347,7 @@ TEMPLATENAME = "General_Purpose.dbc"
 # Mandatory     : NO
 # Steve         : 通常设置一个listener就行了，后面建listener的时候也是如此。
 #-----------------------------------------------------------------------------
-#LISTENERS = "listener1 listener2"
+LISTENERS = "listener"
 
 #-----------------------------------------------------------------------------
 # Name          : VARIABLESFILE 
@@ -1333,7 +1396,7 @@ TEMPLATENAME = "General_Purpose.dbc"
 # Mandatory     : NO
 # Steve         : 内存使用100%，我一般75%
 #-----------------------------------------------------------------------------
-#MEMORYPERCENTAGE = "40"
+MEMORYPERCENTAGE = "75"
 
 #-----------------------------------------------------------------------------
 # Name          : DATABASETYPE
@@ -1365,7 +1428,7 @@ TEMPLATENAME = "General_Purpose.dbc"
 # Mandatory     : NO
 # Steve         : 内存使用大小，可以算一下
 #-----------------------------------------------------------------------------
-#TOTALMEMORY = "800"
+TOTALMEMORY = "<75% of RAM>"
 
 # Steve         : 再往下是dbca创建其他使用的参数了，可以暂时不看了。
 #-----------------------*** End of CREATEDATABASE section ***------------------------
@@ -1863,18 +1926,37 @@ dbca -silent -responseFile /u01/app/oracle/dbca.rsp
 ```
 另起一个窗口可以***tail***一下生成的日志文件，进行检查和排错。
 
-运行完以后会提示需要使用Root执行两个命令，这个和图形化安装是一样的。
-```shell
-/home/oracle/oraInventory/orainstRoot.sh
-/u01/app/oracle/product/11.2.0/dbhome_1/root.sh
-```
 到这一步数据库就安装完毕了，可以***sqlplus***登录看看了
 
 ### 配置监听
 来看看netca.rsp，图形界面创建listener基本也是一路下一步，所以netca.rsp修改的内容确实不多，加上创建以后，可以自己修改listener.ora文件来修改配置，所以影响不大。
 
+简化内容如下：
+```shell
+################################################
+## Simple Response File for NETCA             ##
+################################################
+
+[GENERAL]
+RESPONSEFILE_VERSION="11.2"
+CREATE_TYPE="CUSTOM"
+
+[oracle.net.ca]
+INSTALLED_COMPONENTS={"server","net8","javavm"}
+INSTALL_TYPE=""typical""
+LISTENER_NUMBER=1
+LISTENER_NAMES={"LISTENER"}
+LISTENER_PROTOCOLS={"TCP;1521"}
+LISTENER_START=""LISTENER""
+NAMING_METHODS={"TNSNAMES","ONAMES","HOSTNAME"}
+NSN_NUMBER=1
+NSN_NAMES={"EXTPROC_CONNECTION_DATA"}
+NSN_SERVICE={"PLSExtProc"}
+NSN_PROTOCOLS={"TCP;HOSTNAME;1521"}
+```
+
 <details>
-<summary>单击展开 netca.rsp</summary>
+<summary><font color='#ea6f5a'><b><i>单击展开 netca.rsp 详细内容</i></b></font></summary>
 
 ```shell
 [oracle@WMS-ZJK-DB rsp]$ cat netca.rsp
